@@ -2,11 +2,18 @@
 
 namespace App\Imports;
 
+use App\Exports\UsersExport;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Facades\Excel;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class CodeImport implements ToCollection
+
+class CodeImport implements ToArray
 {
     /**
      * @param Collection $collection
@@ -14,32 +21,29 @@ class CodeImport implements ToCollection
     public function collection(Collection $collection)
     {
 
-
-        $data = [];
-       // dd($collection);
-        foreach ($collection as $key => $value) {
-            if ($key == 0)
-                continue;
-            $value = $value->toArray();
-
-            if ($key == 2)
-                break;
-
-
-            $qrCode = QrCode::size(50)->generate('Hello, Laravel 11!');
-
-            $data[] = [
-                'code' => $value[0],
-                'id' => $value[1],
-                'img' => $qrCode
-            ];
-
-            dd($data) ;
-
-
-            # code...
-        }
-
-        dd($data);
     }
+
+    public function array(array $array)
+    {
+
+       // $export = new UsersExport($array);
+
+       // $export->queue("invoices-" . rand(0, 100000) . "xlsx");
+        
+        // Excel::download($export, "invoices-" . rand(0, 100000) . "xlsx");
+
+        //  dd($array) ;
+    }
+
+    public function chunkSize(): int
+    {
+        return 100;
+    }
+
+    public function progressBar($progressBar)
+    {
+        $progressBar->advance();
+    }
+
+
 }
